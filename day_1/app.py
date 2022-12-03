@@ -18,6 +18,7 @@ def get_elf_max_calorie_counts(data, n = 1):
     return sum(heapq.nlargest(n, elf_totals))
 
 input = Input(int)
+
 # PART ONE
 # print(get_elf_max_calorie_counts(input.example))
 print(get_elf_max_calorie_counts(input.puzzle)) 

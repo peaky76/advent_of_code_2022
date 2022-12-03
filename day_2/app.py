@@ -53,6 +53,7 @@ def total(matches, strategy):
     return total
     
 input = Input()
+
 # PART ONE
 # print(total(input.example, CHOICE_STRATEGY))
 print(total(input.puzzle, CHOICE_STRATEGY)) 

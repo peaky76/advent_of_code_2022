@@ -1,5 +1,8 @@
-from input import Input
 import heapq
+import sys
+
+sys.path.append("..")
+from input import Input
 
 def get_elf_max_calorie_counts(data, n = 1):
     elf_totals = []

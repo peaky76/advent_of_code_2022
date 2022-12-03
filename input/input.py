@@ -1,6 +1,6 @@
 class Input:
 
-    def __init__(self, cast):
+    def __init__(self, cast = str):
         self.cast = cast
 
     @property

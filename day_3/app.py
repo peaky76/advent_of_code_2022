@@ -28,4 +28,13 @@ print(priority_sum(input.puzzle, duplicate_item))
 
 # PART TWO
 print(priority_sum(input.example, shared_item, 3)) 
-print(priority_sum(input.puzzle, shared_item, 3))
+print(priority_sum(input.puzzle, shared_item, 3))assignment.split('-')) for assignment in assignments]
+
+input = Input()
+
+# PART ONE 
+input = [str(line) for line in open("example_input.txt", "r")]
+print(input)
+# print([get_assignments(line) for line in input.example])
+
+# PART TWO

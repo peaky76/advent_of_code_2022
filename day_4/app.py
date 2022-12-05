@@ -4,10 +4,9 @@ sys.path.append("..")
 from input import Input
 
 def count_overlaps(source, overlap_type = all):
-    assignments = [get_assignments(pair) for pair in source]
     return sum([
         (has_overlap(*pair, overlap_type) or has_overlap(*pair[::-1], overlap_type)) 
-        for pair in assignments
+        for pair in [get_assignments(pair) for pair in source]
     ])
 
 def get_assignments(pair):

@@ -6,27 +6,25 @@ from input import Input
 
 def get_rearrangement(source, cratemover_version):
     details = read_input(source)
-    return ''.join([stack[-1] for stack in perform_instructions(details['instructions'], details['stacks'], cratemover_version)])
-
-def perform_instructions(instructions, stacks, cratemover_version):
-    stacking_method = {
+    transform = {
         9000: lambda x: x,
         9001: lambda x: x[::-1]
-    }
-    for instruction in instructions:
-        lifts = []
-        for _ in range(instruction['num']):
-            lifts.append(stacks[instruction['stack_from'] - 1].pop())
-        for lift in stacking_method[cratemover_version](lifts):
-            stacks[instruction['stack_to'] - 1].append(lift)
+    }[cratemover_version]
+    return ''.join([stack[-1] for stack in perform_instructions(details['instructions'], details['stacks'], transform)])
+
+def perform_instructions(instructions, stacks, transform):
+    for i in instructions:
+        from_stack = stacks[i['stack_from'] - 1]
+        to_stack = stacks[i['stack_to'] - 1]
+        to_stack += transform([from_stack.pop() for _ in range(i['num'])])
     return stacks
 
 def stack_level(row):
     row = row.replace('     ', ' [#] ')
     row = row.replace(']    ', '] [#]')
     row = row.replace('    [', '[#] [')
-    stack_level = row.split(' ')
-    return [x.replace('[','').replace(']','') if x != '[#]' else None for x in stack_level]
+    row = row.replace('[', '').replace(']','') 
+    return [x if x != '#' else None for x in row.split(' ')]
 
 def instruction_row(row):
     num, stacks = row.strip().replace('move','').split('from')

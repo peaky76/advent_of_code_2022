@@ -4,55 +4,36 @@ import sys
 sys.path.append("..")
 from input import Input
 
-def get_matrix(source):
-    return [[int(tree) for tree in row] for row in source]
-
-def get_sightlines(matrix, x, y):
-    return [
+def get_sightlines(matrix, x, y, direction = 'TO'):
+    north, south, west, east = [
         [matrix[z][y] for z in range(x)],
         [matrix[z][y] for z in range(x + 1, len(matrix))],
         [matrix[x][z] for z in range(y)],
         [matrix[x][z] for z in range(y + 1, len(matrix[0]))]
     ]
+    return [north, south[::-1], west, east[::-1]] if direction == 'TO' else [north[::-1], south, west[::-1], east]
 
-def get_scenic_score(matrix, x, y):
-    sightlines = get_sightlines(matrix, x, y)
+def scenic_score(matrix, x, y):
     target = matrix[x][y]
-    north, south, west, east = sightlines
-    north = north[::-1]
-    west = west[::-1]
-    scores = []
-    for direction in [north, west, east, south]:
-        score = 0
-        for tree in direction:
-            if tree < target:
-                score +=1
-            else:
-                score += 1
-                break
-        scores.append(score)
-
-    return math.prod(scores)    
-
+    return math.prod([
+        next((i + 1 for i, tree in enumerate(direction) if tree >= target), len(direction)) # Visible trees count 
+        for direction in get_sightlines(matrix, x, y, 'FROM')
+    ])    
+   
 def is_visible(matrix, x, y):
-    sightlines = get_sightlines(matrix, x, y)
     target = matrix[x][y]
-    return any(all(tree < target for tree in sightline) for sightline in sightlines)
+    return any(all(tree < target for tree in sightline) for sightline in get_sightlines(matrix, x, y, 'TO'))
 
-def count_visible_trees(source):
-    matrix = get_matrix(source)     
-    return sum(is_visible(matrix, row, col) for row in range(len(matrix)) for col in range(len(matrix[0])))
-
-def get_ideal_spot_score(source):
-    matrix = get_matrix(source)
-    return max(get_scenic_score(matrix, row, col) for row in range(len(matrix)) for col in range(len(matrix[0])))
+def get_result(source, calc_fn, assess_fn):
+    matrix = [[int(tree) for tree in row] for row in source]
+    return calc_fn(assess_fn(matrix, row, col) for row in range(len(matrix)) for col in range(len(matrix[0])))
 
 input = Input()
 
 # PART ONE
-# print(count_visible_trees(input.example))
-# print(count_visible_trees(input.puzzle))
+# print(get_result(input.example, sum, is_visible))
+print(get_result(input.puzzle, sum, is_visible))
 
 # PART TWO
-# print(get_ideal_spot_score(input.example))
-print(get_ideal_spot_score(input.puzzle))
+# print(get_result(input.example, max, scenic_score))
+print(get_result(input.puzzle, max, scenic_score))

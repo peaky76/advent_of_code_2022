@@ -4,6 +4,10 @@ class Input:
         self.cast = cast
 
     @property
+    def bonus(self):
+        return self._read_input("bonus_input.txt")
+
+    @property
     def example(self):
         return self._read_input("example_input.txt")
 

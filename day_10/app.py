@@ -1,5 +1,4 @@
 import sys
-# from collections import namedtuple
 
 sys.path.append("..")
 from input import Input
@@ -24,17 +23,12 @@ def signal_strength_during(n, source):
     return n * x_during(n, source)
 
 def draw(source):
-    output = []
     for i in range(0, 240):
         sprite_centre = x_during(i + 1, source)
-        if abs((i % 40) - sprite_centre) <= 1:
-            output.append('#')
-        else:
-            output.append('.')
+        symbol = '#' if abs((i % 40) - sprite_centre) <= 1 else '.'
+        print(symbol, end='')
         if (i + 1) % 40 == 0 and i != 0:
-            output.append('\n')
-    print(''.join(output))
-
+            print('')
 
 input = Input()
 
@@ -44,5 +38,5 @@ input = Input()
 print(sum([signal_strength_during(y, input.puzzle) for y in range(20, 260, 40)]))
 
 # PART TWO
-# print(draw(input.bonus))
-print(draw(input.puzzle))
+# draw(input.bonus)
+draw(input.puzzle)

@@ -1,4 +1,5 @@
 import sys
+from collections import deque
 
 sys.path.append("..")
 from input import Input
@@ -30,15 +31,17 @@ def do_a_dijkstra(grid, start, end, match_start_value = False):
     min_steps = {end: 0}
     point = end
     visited = []
+    todo = deque()
     
-    while (point != start if not match_start_value else grid[point] != grid[start]):
+    while (grid[point] != grid[start] if match_start_value else point != start):
         visited.append(point)
         for approach in approaches[point]:
             if approach not in visited:
                 min_steps[approach] = min_steps[point] + 1
+                if approach not in todo:
+                    todo.append(approach)
 
-        unvisited = [k for k in min_steps.keys() if k not in visited]
-        point = min(unvisited, key=lambda x: min_steps[x])
+        point = todo.popleft()
          
     return min_steps[point]
 

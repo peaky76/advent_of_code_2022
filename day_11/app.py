@@ -17,7 +17,8 @@ class Monkey:
     def __init__(self, num, operator, adjustor, test_divisible_by_n, true_to, false_to, objects):
         self.num = num
         operator = Monkey.OPS[operator]
-        self.operation = lambda x: operator(x, x) if adjustor == 'old' else operator(x, int(adjustor))
+        self.operator = operator
+        self.adjustor = adjustor
         self.test_divisible_by_n = test_divisible_by_n
         self.true_to = true_to
         self.false_to = false_to
@@ -34,6 +35,10 @@ class Monkey:
     def inspect(self):
         self.objects = [self.worry_reducer(self.operation(object)) for object in self.objects]
         self.inspection_count += len(self.objects)
+
+    def operation(self, x):
+        adjustor = x if self.adjustor == 'old' else int(self.adjustor)
+        return self.operator(x, adjustor)
 
     def test(self, x):
         return x % self.test_divisible_by_n == 0
@@ -59,10 +64,11 @@ def play_piggy_in_the_middle(monkeys, rounds):
 
 def calc_monkey_business(source, rounds, worry_more = False):
     monkeys = [m for m in parse_monkeys(source)]
-    m_lcm = lcm(*[m.test_divisible_by_n for m in monkeys])
     if worry_more:
+        m_lcm = lcm(*[m.test_divisible_by_n for m in monkeys])
+        worry_reducer = lambda x: x % m_lcm if x > m_lcm else x
         for monkey in monkeys:
-            monkey.worry_reducer = lambda x: x % m_lcm if x > m_lcm else x
+            monkey.worry_reducer = worry_reducer 
     counts = sorted([monkey.inspection_count for monkey in play_piggy_in_the_middle(monkeys, rounds)])
     return counts[-2] * counts[-1]
     

@@ -32,7 +32,7 @@ def get_row_min_max_within_manhattan_distance(centre, manhattan_distance):
         positions[centre[1] + i] = (centre[0] - j, centre[0] + j)
     return positions      
 
-def get_no_beacons_count(source, row):
+def get_empties_per_row(source):
     empties_per_row = defaultdict(list)
     signals = []
     beacons = []
@@ -48,14 +48,37 @@ def get_no_beacons_count(source, row):
         for k, v in new_empty_limits.items():
             empties_per_row[k].append(v)
 
-    # print(beacons)
-    # print([(e, row) for e in convert_ranges_to_numbers(empties_per_row[row])])
-    # print([e for e in convert_ranges_to_numbers(empties_per_row[row]) if (e, row) not in beacons])
-
-    return len([e for e in convert_ranges_to_numbers(empties_per_row[row]) if (e, row) not in beacons])
+    return (empties_per_row, beacons, signals)
 
 def convert_ranges_to_numbers(ranges):
     return list(set([n for r in ranges for n in range(r[0], r[1] + 1)]))
+
+def find_missing_beacon(source, max):
+    empties, beacons, signals = get_empties_per_row(source)
+    beacons_per_row = defaultdict(list)
+    signals_per_row = defaultdict(list)
+    for beacon in beacons:
+        beacons_per_row[beacon[1]].append(beacon[0])
+    for signal in signals:
+        signals_per_row[signal[1]].append(signal[0])
+
+    for i in range(max + 1):
+        cannae_be_x_for_row = sorted(list(set(convert_ranges_to_numbers(empties[i]) + beacons_per_row[i] + signals_per_row[i])))
+        within_range = [x for x in cannae_be_x_for_row if x >= 0 and x <= max]
+        if len(within_range) != max + 1:
+            j = [e for e in range(max + 1) if e not in within_range][0]
+            return (j, i)
+
+    return None 
+
+def get_no_beacons_count(source, row):
+    empties, beacons, _ = get_empties_per_row(source)
+    empty_x_for_row = convert_ranges_to_numbers(empties[row])
+    return len([e for e in empty_x_for_row if (e, row) not in beacons])
+
+def calc_tuning_freq(position):
+    x, y = position
+    return x * 4000000 + y
     
 def draw(empties, signals, beacons):
     draw_dict = defaultdict(lambda: '.')
@@ -78,6 +101,8 @@ input = Input()
 
 # PART ONE
 # print(get_no_beacons_count(input.example, 10))
-print(get_no_beacons_count(input.puzzle, 2000000))
+# print(get_no_beacons_count(input.puzzle, 2000000))
 
 # PART TWO
+print(calc_tuning_freq(find_missing_beacon(input.example, 20)))
+print(calc_tuning_freq(find_missing_beacon(input.puzzle, 4000000)))

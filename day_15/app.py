@@ -23,10 +23,17 @@ def get_positions_within_manhattan_distance(centre, manhattan_distance):
             if abs(i) + abs(j) <= manhattan_distance:
                 positions.append((centre[0] + i, centre[1] + j))
     positions.remove(centre)
+    return positions
+
+def get_row_min_max_within_manhattan_distance(centre, manhattan_distance):
+    positions = {}
+    for i in range(-manhattan_distance, manhattan_distance + 1):
+        j = manhattan_distance - abs(i)
+        positions[centre[1] + i] = (centre[0] - j, centre[0] + j)
     return positions      
 
-def get_empties_count(source, row):
-    empties = []
+def get_no_beacons_count(source, row):
+    empties_per_row = defaultdict(list)
     signals = []
     beacons = []
     sb_pairs = [pair for pair in get_signals_and_beacons(source)]
@@ -34,18 +41,22 @@ def get_empties_count(source, row):
     for sb_pair in sb_pairs:
         signal, beacon = sb_pair
         signals.append(signal)
-        beacons.append(beacon)
+        if beacon not in beacons:
+            beacons.append(beacon)
         manhattan_distance = get_manhattan_distance(signal, beacon)
-        no_beacon_positions = get_positions_within_manhattan_distance(signal, manhattan_distance)
-        no_beacon_positions.remove(beacon)
-        empties += no_beacon_positions
+        new_empty_limits = get_row_min_max_within_manhattan_distance(signal, manhattan_distance)
+        for k, v in new_empty_limits.items():
+            empties_per_row[k].append(v)
 
-    empties = list(set([empty for empty in empties if empty not in signals and empty not in beacons]))
+    # print(beacons)
+    # print([(e, row) for e in convert_ranges_to_numbers(empties_per_row[row])])
+    # print([e for e in convert_ranges_to_numbers(empties_per_row[row]) if (e, row) not in beacons])
 
-    # draw(empties, signals, beacons)
+    return len([e for e in convert_ranges_to_numbers(empties_per_row[row]) if (e, row) not in beacons])
 
-    return len([e for e in empties if e[1] == row])
-
+def convert_ranges_to_numbers(ranges):
+    return list(set([n for r in ranges for n in range(r[0], r[1] + 1)]))
+    
 def draw(empties, signals, beacons):
     draw_dict = defaultdict(lambda: '.')
     draw_dict.update({position: '#' for position in empties})
@@ -66,6 +77,7 @@ def draw(empties, signals, beacons):
 input = Input()
 
 # PART ONE
-print(get_empties_count(input.example, 10))
+# print(get_no_beacons_count(input.example, 10))
+print(get_no_beacons_count(input.puzzle, 2000000))
 
 # PART TWO

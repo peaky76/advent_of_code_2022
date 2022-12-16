@@ -4,6 +4,7 @@ from collections import defaultdict
 
 sys.path.append("..")
 from input import Input
+from util import draw
 
 def get_manhattan_distance(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
@@ -77,25 +78,15 @@ def find_missing_beacon(source, top_bound):
 def calc_tuning_freq(position):
     x, y = position
     return x * 4000000 + y
-    
-# def draw(empties, sensors, beacons):
-#     draw_dict = defaultdict(lambda: '.')
-#     draw_dict.update({position: '#' for position in empties})
-#     draw_dict.update({position: 'S' for position in sensors})
-#     draw_dict.update({position: 'B' for position in beacons})
-
-#     all_coords = empties + sensors + beacons
-#     min_x = min([coord[0] for coord in all_coords]) - 1
-#     max_x = max([coord[0] for coord in all_coords]) + 2
-#     min_y = min([coord[1] for coord in all_coords]) - 1
-#     max_y = max([coord[1] for coord in all_coords]) + 2
-
-#     for y in range(min_y, max_y):
-#         for x in range(min_x, max_x):
-#             print(draw_dict[(x, y)], end='')
-#         print('\n')
 
 input = Input()
+
+# DRAWING
+# sensors_and_beacons = get_sensors_and_beacons(input.example)
+# sensors = [pair[0] for pair in sensors_and_beacons]
+# beacons = [pair[1] for pair in sensors_and_beacons]
+# empties = [(x, row) for row, (lo, hi) in [(row, get_in_range_for_row(*pair, row)) for row in range(25) for pair in sensors_and_beacons] for x in range(lo, hi)]
+# draw([empties, sensors, beacons], ['#', 'S', 'B'])
 
 # PART ONE
 # print(get_no_beacon_count(input.example, 10))

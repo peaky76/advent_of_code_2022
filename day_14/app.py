@@ -3,6 +3,7 @@ from collections import defaultdict
 
 sys.path.append("..")
 from input import Input
+from util import draw
 
 SAND_ENTRY = (500, 0)
 
@@ -35,25 +36,6 @@ def get_block_dict(coords, has_floor = False):
     for coord in coords:
         block_dict[coord[0]].append(coord[1])
     return block_dict
-
-def draw(rock_coords, sand_coords, has_floor):
-    all_coords = rock_coords + sand_coords
-    min_x = min([coord[0] for coord in all_coords]) - 1
-    max_x = max([coord[0] for coord in all_coords]) + 2
-    min_y = min([coord[1] for coord in all_coords]) - 1
-    max_y = max([coord[1] for coord in all_coords]) + 2
-
-    symbols = defaultdict(lambda: '.')
-    symbols.update({(x, y): '#' for (x, y) in rock_coords})
-    symbols.update({(x, y): 'o' for (x, y) in sand_coords})
-
-    for y in range(min_y, max_y):
-        for x in range(min_x, max_x):
-            if not has_floor or not y == max_y - 1: 
-                print(symbols[(x, y)], end='')
-            else:
-                print('#', end='')
-        print('\n')
 
 def enact_freefall(coord, block_dict):
     x, y = coord
@@ -99,7 +81,7 @@ def dribble_sand(cave_map, has_floor = False):
         if y == 0:
             break
 
-    # draw(rock_coords, sand_coords, has_floor)
+    # draw([rock_coords, sand_coords], ['#', 'o'], '#' if has_floor else None)
     print(len(sand_coords))
 
 input = Input()
